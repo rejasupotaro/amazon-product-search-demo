@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "amazon-product-search-japanese"
+version = "0.1.0"
+description = ""
+authors = ["rejasupotaro <takiguchi0817@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.10.8"
+streamlit = "1.19.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

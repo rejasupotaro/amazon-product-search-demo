@@ -2,6 +2,11 @@ from invoke import task
 
 
 @task
+def app(c):
+    c.run("poetry run streamlit run src/app.py")
+
+
+@task
 def format(c):
     """Run formatters (isort and black)."""
     print("Running isort...")

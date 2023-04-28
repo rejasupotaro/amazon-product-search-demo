@@ -6,7 +6,7 @@ colorTo: purple
 sdk: streamlit
 python_version: 3.10.8
 sdk_version: 1.19.0
-app_file: src/app.py
+app_file: src/Sparse_Retrieval.py
 pinned: false
 license: mit
 ---

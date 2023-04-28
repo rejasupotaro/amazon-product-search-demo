@@ -13,6 +13,7 @@ def main():
 
     st.write("### Input")
     query = st.text_input("query")
+    query_tokens = query.split()
 
     st.write("### Results")
     product_dicts = products_df.to_records("records")
@@ -22,7 +23,11 @@ def main():
     for column, field in zip(columns, fields):
         with column:
             st.write(f"#### {field}")
-            products = [product for product in product_dicts if query in str(product[field])]
+            products = [
+                product
+                for product in product_dicts
+                if any(query_token in str(product[field]) for query_token in query_tokens)
+            ]
             for i, product in enumerate(products[:top_k]):
                 rank = i + 1
                 product_title = product["product_title"]

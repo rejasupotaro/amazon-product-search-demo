@@ -18,10 +18,12 @@ def main():
     st.write("### Results")
     top_k = 10
     for i, product in enumerate(products[:top_k]):
+        rank = i + 1
         product_title = product["product_title"]
         product_description = product["product_description"]
+        score = 1.0
 
-        st.markdown(f"{i + 1}. {product_title}")
+        st.markdown(f"{rank}. {product_title} (score: {score})")
         if not pd.isnull(product_description):
             st.markdown(product_description, unsafe_allow_html=True)
         st.markdown("----")

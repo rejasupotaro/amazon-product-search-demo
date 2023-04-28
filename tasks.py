@@ -7,6 +7,11 @@ def app(c):
 
 
 @task
+def export_dependencies(c):
+    c.run("poetry export --without-hashes --format=requirements.txt > requirements.txt")
+
+
+@task
 def format(c):
     """Run formatters (isort and black)."""
     print("Running isort...")

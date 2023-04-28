@@ -1,15 +1,5 @@
-from typing import Literal
-
 import pandas as pd
 import streamlit as st
-
-
-def set_page_config(layout: Literal["centered", "wide"] = "wide"):
-    st.set_page_config(
-        page_title="Amazon Product Search",
-        page_icon="🛍️",
-        layout=layout,
-    )
 
 
 @st.cache_data
@@ -46,5 +36,9 @@ def main():
 
 
 if __name__ == "__main__":
-    set_page_config()
+    st.set_page_config(
+        page_title="Amazon Product Search",
+        page_icon="🛍️",
+        layout="wide",
+    )
     main()

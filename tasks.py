@@ -3,7 +3,7 @@ from invoke import task
 
 @task
 def app(c):
-    c.run("poetry run streamlit run src/app.py")
+    c.run("poetry run streamlit run src/Sparse_Retrieval.py")
 
 
 @task

@@ -28,14 +28,12 @@ class Encoder:
         return vec
 
 
+encoder = Encoder("ku-nlp/deberta-v2-base-japanese")
+
+
 @st.cache_data
 def load_products() -> pd.DataFrame:
     return pd.read_csv("data/products_small_jp.csv.zip")
-
-
-@st.cache_data
-def init_encoder(model_name: str) -> AutoModel:
-    return Encoder(model_name)
 
 
 def main():
@@ -49,7 +47,6 @@ def main():
         return
 
     st.write("### Results")
-    encoder = init_encoder("ku-nlp/deberta-v2-base-japanese")
     query_vec = encoder.encode(query)
     rows = []
     for product in products:

@@ -9,11 +9,12 @@ class Encoder:
     def __init__(self, model_name: str):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
         self.model = AutoModel.from_pretrained(model_name)
+        self.model.eval()
 
-    def encode(self, text: str) -> Tensor:
+    def encode(self, texts: str | list[str]) -> Tensor:
         with torch.no_grad():
             tokens = self.tokenizer(
-                [text],
+                texts if isinstance(texts, list) else [texts],
                 add_special_tokens=True,
                 padding="longest",
                 truncation="longest_first",
@@ -39,7 +40,7 @@ def load_products() -> pd.DataFrame:
 def main():
     st.write("## Amazon Product Search")
     products_df = load_products()
-    products = products_df.head(10).to_dict("records")
+    products = products_df.head(5).to_dict("records")
 
     st.write("### Input")
     query = st.text_input("query")
@@ -48,15 +49,15 @@ def main():
 
     st.write("### Results")
     query_vec = encoder.encode(query)
+    product_vec = encoder.encode([p["product_title"] for p in products])
+    score = (query_vec * product_vec).sum(dim=1).numpy()
     rows = []
-    for product in products:
+    for i, product in enumerate(products):
         title = product["product_title"]
-        product_vec = encoder.encode(title)
-        score = (query_vec * product_vec).sum(dim=1).numpy()
         rows.append(
             {
                 "title": title,
-                "score": score,
+                "score": score[i],
             }
         )
     scores_df = pd.DataFrame(rows)

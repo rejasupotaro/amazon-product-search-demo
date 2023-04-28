@@ -1,4 +1,5 @@
 from typing import Literal
+
 import pandas as pd
 import streamlit as st
 
@@ -22,20 +23,26 @@ def main():
 
     st.write("### Input")
     query = st.text_input("query")
-    products = [product for product in products_df.to_dict("records") if query in product["product_title"]]
 
     st.write("### Results")
+    product_dicts = products_df.to_records("records")
     top_k = 10
-    for i, product in enumerate(products[:top_k]):
-        rank = i + 1
-        product_title = product["product_title"]
-        product_description = product["product_description"]
-        score = 1.0
+    fields = ["product_title", "product_brand", "product_color", "product_bullet_point"]
+    columns = st.columns(len(fields))
+    for column, field in zip(columns, fields):
+        with column:
+            st.write(f"#### {field}")
+            products = [product for product in product_dicts if query in str(product[field])]
+            for i, product in enumerate(products[:top_k]):
+                rank = i + 1
+                product_title = product["product_title"]
+                text = product[field]
+                score = 1.0
 
-        st.markdown(f"{rank}. {product_title} (score: {score})")
-        if not pd.isnull(product_description):
-            st.markdown(product_description, unsafe_allow_html=True)
-        st.markdown("----")
+                st.markdown(f"{rank}. {product_title} (score: {score})")
+                if not pd.isnull(text):
+                    st.markdown(text, unsafe_allow_html=True)
+                st.markdown("----")
 
 
 if __name__ == "__main__":

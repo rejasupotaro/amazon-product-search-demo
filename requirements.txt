@@ -1,5 +1,5 @@
 altair==4.2.2 ; python_full_version == "3.10.8"
-amazon-product-search-dense-retrieval @ git+https://github.com/rejasupotaro/amazon-product-search-dense-retrieval.git@HEAD ; python_full_version == "3.10.8"
+amazon-product-search-dense-retrieval @ git+https://github.com/rejasupotaro/amazon-product-search-dense-retrieval.git@main ; python_full_version == "3.10.8"
 annoy==1.17.2 ; python_full_version == "3.10.8"
 attrs==23.1.0 ; python_full_version == "3.10.8"
 blinker==1.6.2 ; python_full_version == "3.10.8"

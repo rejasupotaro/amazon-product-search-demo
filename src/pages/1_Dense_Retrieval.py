@@ -14,7 +14,7 @@ encoder = BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese")
 def load_product_dict() -> dict[str, Any]:
     products_df = pd.read_csv("data/products_small_jp.csv.zip")
     product_dict: dict[str, Any] = {}
-    for row in products_df.head(5).to_dict("records"):
+    for row in products_df.to_dict("records"):
         product_dict[row["product_id"]] = row
     return product_dict
 

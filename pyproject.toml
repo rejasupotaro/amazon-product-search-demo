@@ -10,7 +10,6 @@ python = "3.10.8"
 streamlit = "1.19.0"
 transformers = "^4.28.1"
 torch = "^2.0.0"
-faiss-cpu = "^1.7.4"
 
 
 [tool.poetry.group.dev.dependencies]

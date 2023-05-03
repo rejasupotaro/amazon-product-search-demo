@@ -29,13 +29,12 @@ def main():
                 for product in product_dicts
                 if any(query_token in str(product[field]) for query_token in query_tokens)
             ]
-            for i, product in enumerate(products[:top_k]):
-                rank = i + 1
-                product_title = product["product_title"]
+            for product in products[:top_k]:
+                product_id = product["product_id"]
                 text = product[field]
                 score = 1.0
 
-                st.markdown(f"{rank}. {product_title} (score: {score})")
+                st.markdown(f"ID: {product_id}, score: {score}")
                 if not pd.isnull(text):
                     st.markdown(text, unsafe_allow_html=True)
                 st.markdown("----")

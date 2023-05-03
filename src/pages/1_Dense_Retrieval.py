@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from amazon_product_search_dense_retrieval.encoders import BERTEncoder
-from amazon_product_search_dense_retrieval.retriever import Retriever
+from amazon_product_search_dense_retrieval.retrievers import SingleVectorRetriever
 
 encoder = BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese")
 
@@ -28,11 +28,10 @@ def main():
         product_ids = pickle.load(file)
     with open("data/title_embs.npy", "rb") as file:
         title_embs = np.load(file)
-    retriever = Retriever(
+    retriever = SingleVectorRetriever(
         dim=title_embs.shape[1],
         doc_ids=product_ids,
-        doc_embs_list=[title_embs],
-        weights=[1],
+        doc_embs=title_embs,
     )
 
     st.write("### Input")

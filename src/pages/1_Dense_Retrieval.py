@@ -1,6 +1,8 @@
 import pandas as pd
 import streamlit as st
 import torch
+from amazon_product_search_dense_retrieval.encoders import BERTEncoder
+from amazon_product_search_dense_retrieval.retriever import Retriever
 from torch import Tensor
 from transformers import AutoModel, AutoTokenizer
 
@@ -29,7 +31,7 @@ class Encoder:
         return vec
 
 
-encoder = Encoder("ku-nlp/deberta-v2-base-japanese")
+encoder = BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese")
 
 
 @st.cache_data
@@ -41,6 +43,16 @@ def main():
     st.write("## Amazon Product Search")
     products_df = load_products()
     products = products_df.head(5).to_dict("records")
+    product_ids = [p["product_id"] for p in products]
+    product_titles = [p["product_title"] for p in products]
+    product_id_to_title = {product_id: product_title for product_id, product_title in zip(product_ids, product_titles)}
+    product_embs = encoder.encode(product_titles)
+    retriever = Retriever(
+        dim=product_embs.shape[1],
+        doc_ids=product_ids,
+        doc_embs_list=[product_embs],
+        weights=[1],
+    )
 
     st.write("### Input")
     query = st.text_input("query")
@@ -48,16 +60,15 @@ def main():
         return
 
     st.write("### Results")
-    query_vec = encoder.encode(query)
-    product_vec = encoder.encode([p["product_title"] for p in products])
-    score = (query_vec * product_vec).sum(dim=1).numpy()
+    query_vec = encoder.encode([query])[0]
+    retrieved = retriever.retrieve(query=query_vec, top_k=5)
     rows = []
-    for i, product in enumerate(products):
-        title = product["product_title"]
+    for product_id, score in zip(*retrieved):
         rows.append(
             {
-                "title": title,
-                "score": score[i],
+                "product_id": product_id,
+                "product_title": product_id_to_title[product_id],
+                "score": score,
             }
         )
     scores_df = pd.DataFrame(rows)

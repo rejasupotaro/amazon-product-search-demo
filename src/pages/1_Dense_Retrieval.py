@@ -23,7 +23,7 @@ def load_product_dict() -> dict[str, Any]:
 
 
 def main():
-    st.write("## Amazon Product Search")
+    st.write("## Dense Retrieval")
 
     st.write("### Input")
     rep_mode = st.selectbox("rep_mode", options=["cls", "mean", "max"], index=0)

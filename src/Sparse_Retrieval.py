@@ -8,7 +8,7 @@ def load_products() -> pd.DataFrame:
 
 
 def main():
-    st.write("## Amazon Product Search")
+    st.write("## Sparse Retrieval")
     products_df = load_products()
 
     st.write("### Input")

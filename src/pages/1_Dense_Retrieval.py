@@ -1,29 +1,37 @@
+import pickle
+from typing import Any
+
+import numpy as np
 import pandas as pd
 import streamlit as st
 from amazon_product_search_dense_retrieval.encoders import BERTEncoder
 from amazon_product_search_dense_retrieval.retriever import Retriever
 
-
 encoder = BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese")
 
 
 @st.cache_data
-def load_products() -> pd.DataFrame:
-    return pd.read_csv("data/products_small_jp.csv.zip")
+def load_product_dict() -> dict[str, Any]:
+    products_df = pd.read_csv("data/products_small_jp.csv.zip")
+    product_dict: dict[str, Any] = {}
+    for row in products_df.head(5).to_dict("records"):
+        product_dict[row["product_id"]] = row
+    return product_dict
 
 
 def main():
     st.write("## Amazon Product Search")
-    products_df = load_products()
-    products = products_df.head(5).to_dict("records")
-    product_ids = [p["product_id"] for p in products]
-    product_titles = [p["product_title"] for p in products]
-    product_id_to_title = {product_id: product_title for product_id, product_title in zip(product_ids, product_titles)}
-    product_embs = encoder.encode(product_titles)
+
+    product_dict = load_product_dict()
+
+    with open("data/product_ids.pkl", "rb") as file:
+        product_ids = pickle.load(file)
+    with open("data/title_embs.npy", "rb") as file:
+        title_embs = np.load(file)
     retriever = Retriever(
-        dim=product_embs.shape[1],
+        dim=title_embs.shape[1],
         doc_ids=product_ids,
-        doc_embs_list=[product_embs],
+        doc_embs_list=[title_embs],
         weights=[1],
     )
 
@@ -34,14 +42,16 @@ def main():
 
     st.write("### Results")
     query_vec = encoder.encode([query])[0]
-    retrieved = retriever.retrieve(query=query_vec, top_k=5)
+    retrieved = retriever.retrieve(query=query_vec, top_k=10)
     rows = []
     for product_id, score in zip(*retrieved):
+        if product_id not in product_dict:
+            continue
+        product = product_dict[product_id]
         rows.append(
             {
-                "product_id": product_id,
-                "product_title": product_id_to_title[product_id],
                 "score": score,
+                **product,
             }
         )
     scores_df = pd.DataFrame(rows)

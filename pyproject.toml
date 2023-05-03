@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "amazon-product-search-japanese"
+name = "amazon-product-search-demo"
 version = "0.1.0"
 description = ""
 authors = ["rejasupotaro <takiguchi0817@gmail.com>"]

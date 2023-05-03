@@ -22,7 +22,8 @@ def main():
     columns = st.columns(len(fields))
     for column, field in zip(columns, fields):
         with column:
-            st.write(f"#### {field}")
+            field_name = " ".join(field.split("_")[1:])
+            st.write(f"#### {field_name}")
             products = [
                 product
                 for product in product_dicts

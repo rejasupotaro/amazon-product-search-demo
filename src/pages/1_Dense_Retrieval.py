@@ -1,34 +1,7 @@
 import pandas as pd
 import streamlit as st
-import torch
 from amazon_product_search_dense_retrieval.encoders import BERTEncoder
 from amazon_product_search_dense_retrieval.retriever import Retriever
-from torch import Tensor
-from transformers import AutoModel, AutoTokenizer
-
-
-class Encoder:
-    def __init__(self, model_name: str):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-        self.model = AutoModel.from_pretrained(model_name)
-        self.model.eval()
-
-    def encode(self, texts: str | list[str]) -> Tensor:
-        with torch.no_grad():
-            tokens = self.tokenizer(
-                texts if isinstance(texts, list) else [texts],
-                add_special_tokens=True,
-                padding="longest",
-                truncation="longest_first",
-                return_attention_mask=True,
-                return_tensors="pt",
-            )
-
-            attention_mask = tokens["attention_mask"]
-            vecs = self.model(input_ids=tokens["input_ids"], attention_mask=attention_mask).last_hidden_state
-            vec = (vecs * attention_mask.unsqueeze(-1)).mean(dim=1)
-            vec = torch.nn.functional.normalize(vec, p=2, dim=1)
-        return vec
 
 
 encoder = BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese")

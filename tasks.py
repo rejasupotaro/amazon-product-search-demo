@@ -10,18 +10,21 @@ from invoke import task
 def encode(c):
     products_df = pd.read_csv("data/products_small_jp.csv.zip")
     products = products_df.to_dict("records")
-    encoder = BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese")
 
     product_ids = [product["product_id"] for product in products]
-    with open("data/product_ids.pkl", "wb") as file:
+    id_filepath = "data/product_ids.pkl"
+    with open(id_filepath, "wb") as file:
         pickle.dump(product_ids, file)
-        print("product_ids.pkl was saved.")
+        print(f"{id_filepath} was saved.")
 
     product_titles = [product["product_title"] for product in products]
-    title_embs = encoder.encode(product_titles)
-    with open("data/title_embs.npy", "wb") as file:
-        np.save(file, title_embs)
-        print("title_embs.npy was saved.")
+    for rep_mode in ["cls", "mean", "max"]:
+        encoder = BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese", rep_mode=rep_mode)
+        title_embs = encoder.encode(product_titles)
+        emb_filepath = f"data/title_embs_{rep_mode}.npy"
+        with open(emb_filepath, "wb") as file:
+            np.save(file, title_embs)
+            print(f"{emb_filepath} was saved.")
 
 
 @task

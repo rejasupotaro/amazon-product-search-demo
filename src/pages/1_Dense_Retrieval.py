@@ -7,7 +7,10 @@ import streamlit as st
 from amazon_product_search_dense_retrieval.encoders import BERTEncoder
 from amazon_product_search_dense_retrieval.retrievers import SingleVectorRetriever
 
-encoder = BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese")
+
+@st.cache_resource
+def load_encoder(rep_mode: str) -> BERTEncoder:
+    return BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese", rep_mode=rep_mode)
 
 
 @st.cache_data
@@ -22,22 +25,23 @@ def load_product_dict() -> dict[str, Any]:
 def main():
     st.write("## Amazon Product Search")
 
-    product_dict = load_product_dict()
+    st.write("### Input")
+    rep_mode = st.selectbox("rep_mode", options=["cls", "mean", "max"], index=0)
+    query = st.text_input("query")
+    if not query:
+        return
 
     with open("data/product_ids.pkl", "rb") as file:
         product_ids = pickle.load(file)
-    with open("data/title_embs.npy", "rb") as file:
+    with open(f"data/title_embs_{rep_mode}.npy", "rb") as file:
         title_embs = np.load(file)
     retriever = SingleVectorRetriever(
         dim=title_embs.shape[1],
         doc_ids=product_ids,
         doc_embs=title_embs,
     )
-
-    st.write("### Input")
-    query = st.text_input("query")
-    if not query:
-        return
+    product_dict = load_product_dict()
+    encoder = load_encoder(rep_mode)
 
     st.write("### Results")
     query_vec = encoder.encode([query])[0]

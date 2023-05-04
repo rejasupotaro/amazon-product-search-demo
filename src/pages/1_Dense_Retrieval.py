@@ -48,7 +48,7 @@ def main():
             return
 
     product_ids = load_product_ids()
-    title_embs = load_product_embs()
+    title_embs = load_product_embs(rep_mode)
     retriever = SingleVectorRetriever(
         dim=title_embs.shape[1],
         doc_ids=product_ids,

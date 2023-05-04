@@ -8,6 +8,20 @@ from amazon_product_search_dense_retrieval.encoders import BERTEncoder
 from amazon_product_search_dense_retrieval.retrievers import SingleVectorRetriever
 
 
+@st.cache_data
+def load_product_ids() -> list[str]:
+    with open("data/product_ids.pkl", "rb") as file:
+        product_ids = pickle.load(file)
+    return product_ids
+
+
+@st.cache_data
+def load_product_embs(rep_mode: str) -> np.ndarray:
+    with open(f"data/title_embs_{rep_mode}.npy", "rb") as file:
+        title_embs = np.load(file)
+    return title_embs
+
+
 @st.cache_resource
 def load_encoder(rep_mode: str) -> BERTEncoder:
     return BERTEncoder(bert_model_name="ku-nlp/deberta-v2-base-japanese", rep_mode=rep_mode)
@@ -27,18 +41,14 @@ def main():
 
     st.write("### Input")
     with st.form("input"):
-        rep_mode = st.selectbox("rep_mode", options=["cls", "mean", "max"], index=0)
-
         query = st.text_input("query")
-
+        rep_mode = st.selectbox("rep_mode", options=["cls", "mean", "max"], index=0)
         submitted = st.form_submit_button("search")
         if not submitted:
             return
 
-    with open("data/product_ids.pkl", "rb") as file:
-        product_ids = pickle.load(file)
-    with open(f"data/title_embs_{rep_mode}.npy", "rb") as file:
-        title_embs = np.load(file)
+    product_ids = load_product_ids()
+    title_embs = load_product_embs()
     retriever = SingleVectorRetriever(
         dim=title_embs.shape[1],
         doc_ids=product_ids,

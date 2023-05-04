@@ -26,10 +26,14 @@ def main():
     st.write("## Dense Retrieval")
 
     st.write("### Input")
-    rep_mode = st.selectbox("rep_mode", options=["cls", "mean", "max"], index=0)
-    query = st.text_input("query")
-    if not query:
-        return
+    with st.form("input"):
+        rep_mode = st.selectbox("rep_mode", options=["cls", "mean", "max"], index=0)
+
+        query = st.text_input("query")
+
+        submitted = st.form_submit_button("search")
+        if not submitted:
+            return
 
     with open("data/product_ids.pkl", "rb") as file:
         product_ids = pickle.load(file)

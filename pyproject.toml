@@ -17,6 +17,7 @@ mypy = "^1.2.0"
 black = "^23.3.0"
 pyproject-flake8 = "^6.0.0.post1"
 invoke = "^2.0.0"
+ruff = "^0.0.265"
 
 [build-system]
 requires = ["poetry-core"]

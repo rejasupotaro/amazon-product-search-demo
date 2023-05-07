@@ -23,7 +23,7 @@ def main():
 
         weight_cols = st.columns(len(fields))
         weights = []
-        for i, (field, default_weight) in enumerate(zip(fields, default_weights)):
+        for i, (field, default_weight) in enumerate(zip(fields, default_weights, strict=True)):
             with weight_cols[i]:
                 field_name = " ".join(field.split("_")[1:])
                 weight = st.number_input(f"{field_name} weight", value=default_weight)
@@ -61,7 +61,7 @@ def main():
             st.markdown("----")
     else:
         columns = st.columns(len(fields))
-        for i, (column, field) in enumerate(zip(columns, fields)):
+        for i, (column, field) in enumerate(zip(columns, fields, strict=True)):
             with column:
                 field_name = " ".join(field.split("_")[1:])
                 st.write(f"#### {field_name}")

@@ -61,7 +61,7 @@ def main():
     query_vec = encoder.encode([query])[0]
     retrieved = retriever.retrieve(query=query_vec, top_k=10)
     rows = []
-    for product_id, score in zip(*retrieved):
+    for product_id, score in zip(*retrieved, strict=True):
         if product_id not in product_dict:
             continue
         product = product_dict[product_id]
